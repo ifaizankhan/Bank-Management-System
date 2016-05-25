@@ -13,7 +13,7 @@ def test_save():
 
 def test_update():
     print("This will test update")
-    u = Transactions(1, 2, 12345, 5000, "saving", 2, 5)
+    u = Transactions(1, 5, 12345, 5000, "saving", 2, 5)
     u.update()
 
 
