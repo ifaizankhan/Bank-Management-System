@@ -3,15 +3,26 @@ from user.utils import db
 
 class UserAccounts():
 
-    file_name = "useraccount.txt"
+    file_name = "user_accounts.txt"
 
-    def __init__(self, id, user_id, account_number, balance, account_type, status):
+    def __init__(self, id=None, user_id=None, account_number=None, balance=None, account_type=None, status=None):
         self.id = id
         self.user_id = user_id
         self.account_number = account_number
         self.balance = balance
         self.account_type = account_type
         self.status = status
+
+    def get(self, user_id):
+        user_accounts = db.get(self.file_name)
+
+        for account in user_accounts:
+            attributes = account.split(',')
+
+            if attributes[1] == user_id:
+                return UserAccounts(attributes[0], attributes[1], attributes[2], attributes[3], attributes[4], attributes[5])
+
+        return None
 
     def show_balance(self):
         return self.balance
@@ -27,6 +38,10 @@ class UserAccounts():
 
     def get_user_id(self):
         return self.user_id
+
+    def update_type(self, value):
+        self.account_type = value
+        self.update()
 
     def save(self):
         useraccounts = []
@@ -51,7 +66,7 @@ class UserAccounts():
             if self.id == attributes[0]:
                 useraccounts.pop(index)
 
-        data = "%d,%s,%d,%d,%s,%s" % (self.id, self.user_id, self.account_number, self.balance, self.account_type, self.status)
+        data = "%s,%s,%s,%s,%s,%s" % (self.id, self.user_id, self.account_number, self.balance, self.account_type, self.status)
         useraccounts.append(data)
         db.save(self.file_name, useraccounts)
 

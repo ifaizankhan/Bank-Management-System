@@ -2,7 +2,7 @@ from user.models.UserAccounts import UserAccounts
 
 
 def prepare():
-    with open("useraccount.txt", "r+") as f:
+    with open("user_accounts.txt", "r+") as f:
         f.write("")
 
 

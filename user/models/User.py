@@ -5,7 +5,7 @@ class User:
 
     file_name = "user.txt"
 
-    def __init__(self, id, name, login_id, pincode, type, date = None):
+    def __init__(self, id=None, name=None, login_id=None, pincode=None, type=None, date=None):
         self.id = id
         self.name = name
         self.login_id = login_id
@@ -13,8 +13,25 @@ class User:
         self.type = type
         self.date = date
 
-    def login(self):
-        pass
+    def get(self, id):
+        users = db.get(self.file_name)
+
+        for user in users:
+            attributes = user.split(',')
+            if attributes[0] == id:
+                return User(attributes[0], attributes[1], attributes[2], attributes[3], attributes[4], attributes[5])
+
+        return None
+
+    def login(self, login_id, pincode):
+        users = db.get(self.file_name)
+
+        for user in users:
+            attributes = user.split(',')
+            if attributes[2] == login_id and attributes[3] == pincode:
+                return self.get(attributes[0])
+
+        return None
 
     def logout(self):
         pass

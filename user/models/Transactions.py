@@ -5,7 +5,7 @@ class Transactions:
 
     file_name = "transaction.txt"
 
-    def __init__(self, id,account_number, transaction_id, amount, account_type, date, balance):
+    def __init__(self, id, account_number, transaction_id, amount, account_type, date, balance):
         self.id = id
         self.account_number = account_number
         self.balance = balance
@@ -38,8 +38,9 @@ class Transactions:
     def withdraw(self):
         pass
 
-    def deposit(self):
-        pass
+    def deposit(self, amount):
+        self.balance = self.balance + amount
+        self.save()
 
     def transfer(self):
         pass
@@ -51,7 +52,7 @@ class Transactions:
         except Exception as e:
             pass
 
-        data = "%d,%d,%d,%d,%s,%d,%d" % (self.id, self.account_number, self.transaction_id, self.amount, self.account_type, self.date, self.balance)
+        data = "%s,%s,%s,%s,%s,%s,%s" % (self.id, self.account_number, self.transaction_id, self.amount, self.account_type, self.date, self.balance)
         transactions.append(data)
         db.save(self.file_name, transactions)
 
@@ -67,9 +68,6 @@ class Transactions:
             if self.id == attributes[0]:
                 transactions.pop(index)
 
-        data = "%d,%d,%d,%d,%s,%d,%d" % (self.id, self.account_number, self.transaction_id, self.amount, self.account_type, self.date,self.balance)
+        data = "%s,%s,%s,%s,%s,%s,%s" % (self.id, self.account_number, self.transaction_id, self.amount, self.account_type, self.date,self.balance)
         transactions.append(data)
         db.save(self.file_name, transactions)
-
-
-
