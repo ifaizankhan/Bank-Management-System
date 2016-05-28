@@ -3,7 +3,7 @@ from user.utils import db
 
 class UserAccounts():
 
-    file_name = "user_accounts.txt"
+    file_name = "../user_accounts.txt"
 
     def __init__(self, id=None, user_id=None, account_number=None, balance=None, account_type=None, status=None):
         self.id = id
@@ -24,21 +24,6 @@ class UserAccounts():
 
         return None
 
-    def show_balance(self):
-        return self.balance
-
-    def get_status(self):
-        return self.status
-
-    def get_account_type(self):
-        return self.account_type
-
-    def get_account_number(self):
-        return self.account_number
-
-    def get_user_id(self):
-        return self.user_id
-
     def update_type(self, value):
         self.account_type = value
         self.update()
@@ -53,6 +38,8 @@ class UserAccounts():
         data = "%d,%s,%d,%d,%s,%s" % (self.id, self.user_id, self.account_number, self.balance, self.account_type, self.status)
         useraccounts.append(data)
         db.save(self.file_name, useraccounts)
+
+        return self
 
     def update(self):
         useraccounts = []
@@ -70,3 +57,4 @@ class UserAccounts():
         useraccounts.append(data)
         db.save(self.file_name, useraccounts)
 
+        return self

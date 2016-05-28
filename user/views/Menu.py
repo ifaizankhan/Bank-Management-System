@@ -1,200 +1,283 @@
+from datetime import datetime
+
 from user.models.User import User
 from user.models.UserAccounts import UserAccounts
 from user.models.Transactions import Transactions
 
-def menu():
+
+AMOUNT_DICT = {1: 500, 2: 1000, 3: 2000, 4: 5000, 5: 10000, 6: 15000, 7: 20000}
+CUSTOMER_DICT = {1: "Withdraw Cash", 2: "Cash Transfer", 3: "Deposit Cash", 4: "Display Balance", 5: "Exit"}
+ADMIN_DICT = {1: "Create New Account.", 2: "Delete Existing Account.", 3: "Update Account Information.",
+              4: "Search for Account.", 5: "View Reports.", 6: "Exit"}
+
+
+def goto_main_menu():
+    aa = input("Please go to Main Menu")
+    menu()
+
+
+def login():
     login = input("Login: ")
     pincode = input("Pincode: ")
 
     user = User()
-    user = user.login(login, pincode)
+    return user.login(login, pincode)
 
-    if user:
-        if(user.type == "Customer"):
 
-            user_account = UserAccounts()
-            user_account = user_account.get(user.id)
+def user_account(user):
+    user_account = UserAccounts()
+    return user_account.get(user.id)
 
-            if user_account:
-                user_account.account_type
-            else:
-                print("Invalid user account")
 
-            #transaction = Transactions(2, user_account.id, 2, 5000, user_account.account_type, 12, user_account.balance)
-            #transaction.save()
+def fast_withdraw():
+    print("Fast Cash\n")
+    options = ""
+    for k, v in AMOUNT_DICT.items():
+        options += "%d---%d\n" % (k, v)
 
-            print("Customer Menu")
+    print("%s\n" % options)
 
-            print("1---Withdraw Cash.\n"
-                  "2---Cash Transfer.\n"
-                  "3---Deposit Cash.\n"
-                  "4---Display Balance.\n"
-                  "5---Exit.\n\n")
+    withdraw = int(input("Select one of the denominations of money: \n"))
 
-            x = int(input("Please select one of the above options: "))
+    try:
+        AMOUNT_DICT[withdraw]
+    except KeyError as e:
+        print(input("Invalid option please select again "))
+        fast_withdraw()
 
-            if x == 1:
-                print("Withdraw Cash\n")
+    y = input("Are you sure you want to withdraw ------ (Y/N)? ")
+    if y.lower() == 'n':
+        customer_menu()
 
-                print("1---Normal Cash.\n"
-                      "2---Fast Cash.\n\n")
+    return withdraw
 
-                x = int(input("Please select a mode of withdrawal: "))
 
-                if x == 1:
-                    print("Fast Cash\n")
+def normal_withdraw():
+    print("Normal Cash\n\n")
 
-                    print("1---500\n"
-                          "2---1000\n"
-                          "3---2000\n"
-                          "4---5000\n"
-                          "5---10000\n"
-                          "6---15000\n"
-                          "7---20000\n\n")
+    withdraw = int(input("Enter the withdrawal amount: \n"))
 
-                    with_draw = int(input("Select one of the denominations of money: \n"))
+    y = input("Are you sure you want to withdraw ------ (Y/N)? ")
+    if y.lower() == 'n':
+        customer_menu()
 
-                    y = input("Are you sure you want to withdraw ------ (Y/N)? ")
+    return withdraw
 
-                    if y == 'Y' or y == 'y':
-                        print("Cash Successfully withdrawn!\n")
-                    elif y == 'N' or y == 'n':
-                        print("Transaction is cancelled!\n")
 
-                    z = input("Do you wish to print a receipt (Y/N)?")
 
-                    if z == 'Y' or z == 'y':
-                        print("Account # ", user_account.account_number)
-                        print("Date: ", user.date)
-                        print("Withdrawn: ", with_draw)
-                        print("Balance: ", user_account.update(user_account.balance))
-                    elif z == 'N' or z == 'n':
-                        pass
+def withdraw_cash():
+    print("Withdraw Cash\n")
 
-                elif x == 2:
-                    print("Normal Cash\n\n")
+    print("1---Fast Cash.\n"
+          "2---Normal Cash.\n\n")
 
-                    x = int(input("Enter the withdrawal amount: \n"))
+    x = int(input("Please select a mode of withdrawal: "))
 
-                    print("Cash Successfully Withdrawn!")
+    if x not in [1, 2]:
+        print(input("Invalid option please select again "))
+        withdraw_cash()
 
-                    print("Do you wish to print a receipt (Y/N)?")
+    return x
 
-                    z = input()
 
-                    if z == 'Y' or z == 'y':
-                        print("Account # ")
-                        print("Date: ")
-                        print("Withdrawn: ")
-                        print("Balance: ")
-                    elif z == 'N' or z == 'n':
-                        pass
+def customer_menu():
+    print("Customer Menu")
 
-            elif x == 2:
-                print("Cash Transfer")
+    options = ""
+    for k, v in CUSTOMER_DICT.items():
+        options += "%d---%s\n" %(k, v)
 
-                print("Enter amount in multiples of 500: ")
+    print("%s\n" % options)
+    x = int(input("Please select one of the above options: "))
 
-                x = int(input())
+    try:
+        CUSTOMER_DICT[x]
+    except KeyError as e:
+        print(input("Invalid option please select again "))
+        customer_menu()
 
-                print("Enter the account number to which you want to transfer: ")
+    return x
 
-                z = int(input())
+def admin_menu():
+    print("Administrator Menu\n\n")
 
-                print("You wish to deposit Rs ", x, "in account held by Mr. "
-                      , '''account holder name''',
-                      "if this information is correct please re-enter the account number: ")
+    options = ""
+    for k, v in ADMIN_DICT.items():
+        options += "%d---%s\n" % (k, v)
 
-                p = int(input())
+    print("%s\n" % options)
+    x = int(input("Please select one of the above options: "))
 
-                print("Transaction confirmed.")
+    try:
+        ADMIN_DICT[x]
+    except KeyError as e:
+        print(input("Invalid option please select again "))
 
-                print("Do you wish to print a receipt (Y/N)?")
 
-                z = input()
 
-                if z == 'Y' or z == 'y':
-                    print("Account # ")
-                    print("Date: ")
-                    print("Transferred: ")
-                    print("Balance: ")
-                elif z == 'N' or z == 'n':
-                    pass
+def transaction(user_account, amount, type):
+    balance = int(user_account.balance)
 
-            elif x == 3:
-                print("Deposit Cash")
+    if type == 'withdraw':
+        balance = balance - amount
+    elif type == 'deposit':
+        balance = balance + amount
+    elif type == 'transfer':
+        balance = balance - amount
 
-                print("Enter the cash amount to deposit: ")
+    transaction = Transactions(2, user_account.id, amount, user_account.account_type, type, datetime.now(), balance)
+    user_account.balance = balance
+    user_account.update()
+    return transaction.save()
 
-                x = int(input())
 
-                print("Cash deposited successfully!")
+def cash_transfer():
+    print("Cash Transfer \n")
 
-                print("Do you wish to print a receipt (Y/N)?")
+    amount = int(input("Enter amount in multiples of 500: \n"))
 
-                z = input()
+    account_number = int(input("Enter the account number to which you want to transfer: \n"))
 
-                if z == 'Y' or z == 'y':
-                    print("Account # ")
-                    print("Date: ")
-                    print("Deposited: ")
-                    print("Balance: ")
-                elif z == 'N' or z == 'n':
-                    pass
+    print("You wish to deposit Rs ", amount, "in account held by Mr. "
+          , "ali")
+    x = int(input("if this information is correct please re-enter the account number: "))
 
-            elif x == 4:
-                print("Display Balance")
+    return amount
 
-                print("Account # ")
-                print("Date: ")
-                print("Balance: ")
 
-            elif x == 5:
-                # exit
-                pass
+def deposit():
+    print("Deposit Cash")
 
-            else:
-                print("Pleas Enter the right choice.")
+    amount = int(input("Enter the cash amount to deposit: "))
+
+    return amount
+
+
+def recipt(trans):
+    print("Account # ", trans.account_number)
+    print("Date: ", trans.date)
+    print("Withdrawn: ", trans.amount )
+    print("Balance: ", trans.balance)
+
+
+def menu():
+    print ("Welcome to Bank Mnagament System")
+
+    user = login()
+    if not user:
+        print("Invalid user")
+        goto_main_menu()
+
+    if user.type == "customer":
+
+        user_acc = user_account(user)
+        if not user_acc:
+            print("Invalid customer account")
+            goto_main_menu()
+
+        option = customer_menu()
+
+        if option == 1:
+            withdraw_opt = withdraw_cash()
+
+            if withdraw_opt == 1:
+                fast_opt = fast_withdraw()
+
+                trans = transaction(user_acc, AMOUNT_DICT[fast_opt], "withdraw")
+                print("Cash Successfully withdrawn!\n")
+
+                z = input("Do you wish to print a receipt (Y/N)?")
+
+                if z.lower() == 'y':
+                    recipt(trans)
+
+                print(input("Press enter to go back to Customer Menu "))
+                customer_menu()
+
+            elif withdraw_opt == 2:
+                normal_opt = normal_withdraw()
+
+                trans = transaction(user_acc,normal_opt,"withdraw")
+                print("Cash Successfully Withdrawn! \n\n")
+
+                z = input("Do you wish to print a receipt (Y/N)?")
+
+                if z.lower() == 'y':
+                    recipt(trans)
+
+                print(input("Press enter to go back to Customer Menu "))
+                customer_menu()
+
+        elif option == 2:
+            transfer_opt = cash_transfer()
+
+            trans = transaction(user_acc, transfer_opt, 'transfer')
+            print("Transaction confirmed.\n")
+
+            z = input("Do you wish to print a receipt (Y/N)?")
+            #how we are going to transfer money to another account and udpdate its transaction
+
+            if z.lower() == 'y':
+                recipt(trans)
+
+            print(input("Press enter to go back to Customer Menu "))
+            customer_menu()
+
+        elif option == 3:
+            deposit_opt = deposit()
+
+            trans = transaction(user_acc, deposit_opt, 'deposit')
+            print("Cash deposited successfully!\n")
+
+            z = input("Do you wish to print a receipt (Y/N)?")
+
+            if z.lower() == 'y':
+                recipt(trans)
+
+            print(input("Press enter to go back to Customer Menu "))
+            customer_menu()
+
+        elif option == 4:
+            print("Displaying Balance...\n")
+
+            print("Account # ", user_acc.account_number)
+            print("Date: ", datetime.now())
+            print("Balance: ", user_acc.balance)
+
+            print(input("Invalid option please select again "))
+            customer_menu()
+
+        elif option == 5:
+            goto_main_menu()
 
         else:
-                print("Administrator Menu\n\n")
+            print("Pleas Enter the right choice. \n")
 
-                print("1---Create New Account.\n"
-                      "2---Delete Exsiting Account.\n"
-                      "3---Update Account Information.\n"
-                      "4---Search for Account.\n"
-                      "5---View Reports.\n"
-                      "6---Exit.\n\n")
+    elif user.type == "admin":
+        admin_opt = admin_menu()
 
-                print("Please Select one of the above options: ")
+        if admin_opt == 1:
+            print("Creating New Account...\n\n")
 
-                p = int(input())
+        elif admin_opt == 2:
+            print("Deleting Existing account...\n\n")
 
-                if x == 1:
-                    print("Creating New Account...\n\n")
+        elif admin_opt == 3:
+            print("Updating account information...\n\n")
 
-                elif x == 2:
-                    print("Deleting Existing account...\n\n")
+        elif admin_opt == 4:
+            print("Searching for account...\n\n")
 
-                elif x == 3:
-                    print("Updating account information...\n\n")
+        elif admin_opt == 5:
+            print("Reports")
 
-                elif x == 4:
-                    print("Searching for account...\n\n")
-
-                elif x == 5:
-                    print("Reports")
-
-                elif x == 6:
-                    pass
-
-                else:
-                    print("Please enter the right choice.")
-
-            else:
-                print("please enter the right choice")
-
-
+        elif admin_opt == 6:
+            pass
+        else:
+            print("Please enter the right choice.")
     else:
-    print("invalid login")
+        print("please enter the right choice")
+
+
+
 

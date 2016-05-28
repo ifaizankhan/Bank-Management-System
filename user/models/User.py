@@ -3,15 +3,14 @@ from user.utils import db
 
 class User:
 
-    file_name = "user.txt"
+    file_name = "../user.txt"
 
-    def __init__(self, id=None, name=None, login_id=None, pincode=None, type=None, date=None):
+    def __init__(self, id=None, name=None, login_id=None, pincode=None, type=None):
         self.id = id
         self.name = name
         self.login_id = login_id
         self.pincode = pincode
         self.type = type
-        self.date = date
 
     def get(self, id):
         users = db.get(self.file_name)
@@ -19,7 +18,7 @@ class User:
         for user in users:
             attributes = user.split(',')
             if attributes[0] == id:
-                return User(attributes[0], attributes[1], attributes[2], attributes[3], attributes[4], attributes[5])
+                return User(attributes[0], attributes[1], attributes[2], attributes[3], attributes[4])
 
         return None
 
@@ -46,7 +45,7 @@ class User:
         except Exception as e:
             pass
 
-        data = "%d,%s,%s,%s,%s,%s" % (self.id, self.name, self.login_id, self.pincode, self.type, self.date)
+        data = "%d,%s,%s,%s,%s" % (self.id, self.name, self.login_id, self.pincode, self.type)
         users.append(data)
         db.save(self.file_name, users)
 
@@ -62,6 +61,6 @@ class User:
             if self.id == attributes[0]:
                 users.pop(index)
 
-        data = "%d,%s,%s,%s,%s,%s" % (self.id, self.name, self.login_id, self.pincode, self.type, self.date)
+        data = "%d,%s,%s,%s,%s" % (self.id, self.name, self.login_id, self.pincode, self.type)
         users.append(data)
         db.save(self.file_name, users)
