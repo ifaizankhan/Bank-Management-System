@@ -45,7 +45,7 @@ class User:
         except Exception as e:
             pass
 
-        data = "%d,%s,%s,%s,%s" % (self.id, self.name, self.login_id, self.pincode, self.type)
+        data = "%s,%s,%s,%s,%s" % (self.id, self.name, self.login_id, self.pincode, self.type)
         users.append(data)
         db.save(self.file_name, users)
 

@@ -13,16 +13,22 @@ class UserAccounts():
         self.account_type = account_type
         self.status = status
 
-    def get(self, user_id):
+    def _get(self, key, value):
         user_accounts = db.get(self.file_name)
 
         for account in user_accounts:
             attributes = account.split(',')
 
-            if attributes[1] == user_id:
+            if str(attributes[key]) == str(value):
                 return UserAccounts(attributes[0], attributes[1], attributes[2], attributes[3], attributes[4], attributes[5])
 
         return None
+
+    def get(self, user_id):
+        return self._get(1, user_id)
+
+    def get_by_aacount(self, acc_no):
+        return self._get(2, acc_no)
 
     def update_type(self, value):
         self.account_type = value
@@ -35,7 +41,7 @@ class UserAccounts():
         except Exception as e:
             pass
 
-        data = "%d,%s,%d,%d,%s,%s" % (self.id, self.user_id, self.account_number, self.balance, self.account_type, self.status)
+        data = "%s,%s,%s,%s,%s,%s" % (self.id, self.user_id, self.account_number, self.balance, self.account_type, self.status)
         useraccounts.append(data)
         db.save(self.file_name, useraccounts)
 
@@ -44,11 +50,12 @@ class UserAccounts():
     def update(self):
         useraccounts = []
         try:
-            useraccounts = db.read(self.file_name)
+            useraccounts = db.get(self.file_name)
         except Exception as e:
             pass
-
-        for index, user in useraccounts:
+        import pdb;
+        pdb.set_trace()
+        for index, user in enumerate(useraccounts):
             attributes = user.split(",")
             if self.id == attributes[0]:
                 useraccounts.pop(index)

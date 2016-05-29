@@ -57,6 +57,9 @@ def normal_withdraw():
 
     withdraw = int(input("Enter the withdrawal amount: \n"))
 
+    if withdraw < user_account.balance:
+        print("You dont have sufficient balance")
+
     y = input("Are you sure you want to withdraw ------ (Y/N)? ")
     if y.lower() == 'n':
         customer_menu()
@@ -113,7 +116,59 @@ def admin_menu():
     except KeyError as e:
         print(input("Invalid option please select again "))
 
+    return x
 
+def create_user():
+    print("Creating New Account...\n\n")
+    user = User()
+    user.id = str(input("user.id: "))
+    user.name = str(input("Holders Name: "))
+    user.login_id = str(input("Login ID: "))
+    user.pincode = str(input("pincode: "))
+    user.type = str(input("user type: "))
+    user.save()
+
+
+    user_acc = UserAccounts()
+    user_acc.id = str(input("ID: "))
+    user_acc.user_id = user.id
+    user_acc.account_number = str(input("Account number: "))
+    user_acc.balance = str(input("balance: "))
+    user_acc.account_type = str(input("account type: "))
+    user_acc.status = str(input("status: "))
+    user_acc.save()
+
+
+def delete_user():
+    print("Deleting Existing account...\n\n")
+    user_acc = UserAccounts()
+    user_acc.account_number = str(input("dsd"))
+    del user_acc.account_type
+
+def update_user():
+    print("Updating account information...\n\n")
+
+    user = User()
+    user.id = str(input("user.id: "))
+    user.name = str(input("Holders Name: "))
+    user.login_id = str(input("Login ID: "))
+    user.pincode = str(input("pincode: "))
+    user.type = str(input("user type: "))
+    user.update()
+
+    user_acc = UserAccounts()
+    user_acc.id = str(input("ID: "))
+    user_acc.user_id = user.id
+    user_acc.account_number = str(input("Account number: "))
+    user_acc.balance = str(input("balance: "))
+    user_acc.account_type = str(input("account type: "))
+    user_acc.status = str(input("status: "))
+    user_acc.update()
+
+
+def search_account():
+    print("Searching for account...\n\n")
+    
 
 def transaction(user_account, amount, type):
     balance = int(user_account.balance)
@@ -131,18 +186,24 @@ def transaction(user_account, amount, type):
     return transaction.save()
 
 
-def cash_transfer():
+def cash_transfer(user_account):
     print("Cash Transfer \n")
 
     amount = int(input("Enter amount in multiples of 500: \n"))
 
     account_number = int(input("Enter the account number to which you want to transfer: \n"))
 
+    transfer_account = UserAccounts()
+    transfer_account = transfer_account.get_by_aacount(account_number)
+
+    transfer_user = User()
+    transfer_user = transfer_user.get(transfer_account.user_id)
+
     print("You wish to deposit Rs ", amount, "in account held by Mr. "
-          , "ali")
+          , transfer_user.name)
     x = int(input("if this information is correct please re-enter the account number: "))
 
-    return amount
+    return (amount, transfer_account)
 
 
 def deposit():
@@ -209,13 +270,15 @@ def menu():
                 customer_menu()
 
         elif option == 2:
-            transfer_opt = cash_transfer()
+            (transfer_opt, transfer_acc) = cash_transfer(user_acc)
 
             trans = transaction(user_acc, transfer_opt, 'transfer')
             print("Transaction confirmed.\n")
 
+            transfer_acc.balance += transfer_opt
+            transfer_acc.update()
+
             z = input("Do you wish to print a receipt (Y/N)?")
-            #how we are going to transfer money to another account and udpdate its transaction
 
             if z.lower() == 'y':
                 recipt(trans)
@@ -257,22 +320,18 @@ def menu():
         admin_opt = admin_menu()
 
         if admin_opt == 1:
-            print("Creating New Account...\n\n")
-
+            create_user()
         elif admin_opt == 2:
-            print("Deleting Existing account...\n\n")
-
+            delete_user()
         elif admin_opt == 3:
-            print("Updating account information...\n\n")
-
+            update_user()
         elif admin_opt == 4:
-            print("Searching for account...\n\n")
-
+            search_account()
         elif admin_opt == 5:
             print("Reports")
 
         elif admin_opt == 6:
-            pass
+            goto_main_menu()
         else:
             print("Please enter the right choice.")
     else:
