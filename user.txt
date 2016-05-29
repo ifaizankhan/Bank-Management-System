@@ -1,7 +1,2 @@
 1,Faizan khan,faizan,12345,admin
 2,Wasim khan,wasim,12,customer
-
-
-
-3,umar,umar123,123,customer
-4,,,,

@@ -1,5 +1,2 @@
-2,2,54321,1000000,Saving,active
-1,1,12345,-4500,Saving,active
-
-3,None,56789,2000000,current,active
-,4,,,,
+1,1,12345,4500,Saving,active
+2,2,54321,-5000,current,active

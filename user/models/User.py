@@ -48,19 +48,35 @@ class User:
         data = "%s,%s,%s,%s,%s" % (self.id, self.name, self.login_id, self.pincode, self.type)
         users.append(data)
         db.save(self.file_name, users)
+        return self
 
     def update(self):
         users = []
         try:
-            users = db.read(self.file_name)
+            users = db.get(self.file_name)
         except Exception as e:
             pass
 
-        for index, user in users:
+        for index, user in enumerate(users):
             attributes = user.split(",")
             if self.id == attributes[0]:
                 users.pop(index)
 
-        data = "%d,%s,%s,%s,%s" % (self.id, self.name, self.login_id, self.pincode, self.type)
+        data = "%s,%s,%s,%s,%s" % (self.id, self.name, self.login_id, self.pincode, self.type)
         users.append(data)
+        db.save(self.file_name, users)
+        return self
+
+    def delete(self):
+        users = []
+        try:
+            users = db.get(self.file_name)
+        except Exception as e:
+            pass
+
+        for index, user in enumerate(users):
+            attributes = user.split(",")
+            if self.id == attributes[0]:
+                users.pop(index)
+
         db.save(self.file_name, users)

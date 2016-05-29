@@ -24,10 +24,29 @@ class UserAccounts():
 
         return None
 
+    def get_all(self):
+        user_accounts = db.get(self.file_name)
+        usr_acc_lst = []
+        # [1,2]
+        for account in user_accounts:
+            usr_acc_lst.append(account.split(',')[2])
+        usr_acc_lst.sort()
+        return usr_acc_lst
+
+    def get_all_hashing(self):
+        user_accounts = db.get(self.file_name)
+        usr_accs = {}
+        # {1: UserAccount, 2: {1,2,3,4}}
+        for account in user_accounts:
+            attributes = account.split(',')
+            usr_accs.update({attributes[2]: UserAccounts(attributes[0], attributes[1], attributes[2], attributes[3], attributes[4], attributes[5])})
+
+        return usr_accs
+
     def get(self, user_id):
         return self._get(1, user_id)
 
-    def get_by_aacount(self, acc_no):
+    def get_by_account(self, acc_no):
         return self._get(2, acc_no)
 
     def update_type(self, value):
@@ -53,8 +72,7 @@ class UserAccounts():
             useraccounts = db.get(self.file_name)
         except Exception as e:
             pass
-        import pdb;
-        pdb.set_trace()
+
         for index, user in enumerate(useraccounts):
             attributes = user.split(",")
             if self.id == attributes[0]:
@@ -62,6 +80,22 @@ class UserAccounts():
 
         data = "%s,%s,%s,%s,%s,%s" % (self.id, self.user_id, self.account_number, self.balance, self.account_type, self.status)
         useraccounts.append(data)
+        db.save(self.file_name, useraccounts)
+
+        return self
+
+    def delete(self):
+        useraccounts = []
+        try:
+            useraccounts = db.get(self.file_name)
+        except Exception as e:
+            pass
+
+        for index, user in enumerate(useraccounts):
+            attributes = user.split(",")
+            if self.account_number == attributes[2]:
+                useraccounts.pop(index)
+
         db.save(self.file_name, useraccounts)
 
         return self

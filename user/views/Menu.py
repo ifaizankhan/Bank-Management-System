@@ -139,36 +139,94 @@ def create_user():
     user_acc.save()
 
 
-def delete_user():
+def delete_user(account_no):
     print("Deleting Existing account...\n\n")
     user_acc = UserAccounts()
-    user_acc.account_number = str(input("dsd"))
-    del user_acc.account_type
-
-def update_user():
-    print("Updating account information...\n\n")
+    user_acc = user_acc.get_by_account(account_no)
+    user_acc.delete()
 
     user = User()
-    user.id = str(input("user.id: "))
-    user.name = str(input("Holders Name: "))
-    user.login_id = str(input("Login ID: "))
-    user.pincode = str(input("pincode: "))
-    user.type = str(input("user type: "))
-    user.update()
+    user = user.get(user_acc.user_id)
+    user.delete()
+
+
+def update_user(account_no):
+    print("Updating account information...\n\n")
 
     user_acc = UserAccounts()
-    user_acc.id = str(input("ID: "))
-    user_acc.user_id = user.id
-    user_acc.account_number = str(input("Account number: "))
-    user_acc.balance = str(input("balance: "))
-    user_acc.account_type = str(input("account type: "))
-    user_acc.status = str(input("status: "))
+    user_acc = user_acc.get_by_account(account_no)
+
+    user = User()
+    user = user.get(user_acc.user_id)
+
+    user_name = str(input("Holders Name: "))
+    if user_name:
+        user.name = user_name
+
+    user_login_id = str(input("Login ID: "))
+    if user_login_id:
+        user.login_id = user_login_id
+
+    user_pincode = str(input("pincode: "))
+    if user_pincode:
+        user.pincode = user_pincode
+
+    user_type = str(input("user type: "))
+    if user_type:
+        user.type = user_type
+    user.update()
+
+    user_acc_type = str(input("account type: "))
+    if user_acc_type:
+        user_acc.account_type = user_acc_type
+
+    user_acc_status = str(input("status: "))
+    if user_acc_status:
+        user_acc.status = user_acc_status
     user_acc.update()
 
 
-def search_account():
+def search_account_by_binarysearch(account_id):
     print("Searching for account...\n\n")
-    
+    user_acc = UserAccounts()
+    user_acc = user_acc.get_all()
+    account_id_found = binarySearch(user_acc, account_id)
+    print(account_id_found)
+
+    if account_id_found:
+        print("User found.")
+        user_account = UserAccounts()
+        user_account = user_account.get_by_account(account_id)
+        print(user_account)
+    else:
+        print("No user found")
+
+
+def search_account_by_hashing(account_id):
+    user_acc = UserAccounts()
+    user_acc = user_acc.get_all_hashing()
+    try:
+        print(user_acc[account_id].status)
+    except KeyError as e:
+        print("not found")
+
+def binarySearch(alist, item):
+    first = 0
+    last = len(alist) - 1
+    found = False
+
+    while first <= last and not found:
+        midpoint = (first + last) // 2
+        if alist[midpoint] == item:
+            found = True
+        else:
+            if item < alist[midpoint]:
+                last = midpoint - 1
+            else:
+                first = midpoint + 1
+
+    return found
+
 
 def transaction(user_account, amount, type):
     balance = int(user_account.balance)
@@ -194,7 +252,7 @@ def cash_transfer(user_account):
     account_number = int(input("Enter the account number to which you want to transfer: \n"))
 
     transfer_account = UserAccounts()
-    transfer_account = transfer_account.get_by_aacount(account_number)
+    transfer_account = transfer_account.get_by_account(account_number)
 
     transfer_user = User()
     transfer_user = transfer_user.get(transfer_account.user_id)
@@ -322,11 +380,22 @@ def menu():
         if admin_opt == 1:
             create_user()
         elif admin_opt == 2:
-            delete_user()
+            account_id = input("Enter account id to delete useraccount: ")
+            delete_user(account_id)
+
         elif admin_opt == 3:
-            update_user()
+            account_id = input("Enter account id to update user information: ")
+            update_user(account_id)
+
         elif admin_opt == 4:
-            search_account()
+            option = int(input("1---Binary Search\n"
+                                     "2---By hashing\n"))
+            if option == 1:
+                user_account_id = input("Enter account id to search user information: ")
+                search_account_by_binarysearch(user_account_id)
+            else:
+                user_account_id = input("Enter account id to search user information: ")
+                search_account_by_hashing(user_account_id)
         elif admin_opt == 5:
             print("Reports")
 
