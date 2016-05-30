@@ -101,6 +101,7 @@ def customer_menu():
 
     return x
 
+
 def admin_menu():
     print("Administrator Menu\n\n")
 
@@ -115,8 +116,9 @@ def admin_menu():
         ADMIN_DICT[x]
     except KeyError as e:
         print(input("Invalid option please select again "))
-
+        admin_menu()
     return x
+
 
 def create_user():
     print("Creating New Account...\n\n")
@@ -200,6 +202,15 @@ def search_account_by_binarysearch(account_id):
         print(user_account)
     else:
         print("No user found")
+
+
+def search_account_Amount(account_id):
+    user_acc = UserAccounts()
+    user_acc = user_acc.get_all_hashing()
+    try:
+        print(user_acc[account_id].balance)
+    except KeyError as e:
+        print("not found")
 
 
 def search_account_by_hashing(account_id):
@@ -379,14 +390,21 @@ def menu():
 
         if admin_opt == 1:
             create_user()
+
+            print(input("Press enter to go back to Admin Menu "))
+            admin_menu()
         elif admin_opt == 2:
             account_id = input("Enter account id to delete useraccount: ")
             delete_user(account_id)
 
+            print(input("Press enter to go back to Admin Menu "))
+            admin_menu()
         elif admin_opt == 3:
             account_id = input("Enter account id to update user information: ")
             update_user(account_id)
 
+            print(input("Press enter to go back to Admin Menu "))
+            admin_menu()
         elif admin_opt == 4:
             option = int(input("1---Binary Search\n"
                                      "2---By hashing\n"))
@@ -396,9 +414,14 @@ def menu():
             else:
                 user_account_id = input("Enter account id to search user information: ")
                 search_account_by_hashing(user_account_id)
+            print(input("Press enter to go back to Admin Menu "))
+            admin_menu()
         elif admin_opt == 5:
-            print("Reports")
+            user_account_id = input("Enter account id to search user information: ")
+            search_account_Amount(user_account_id)
 
+            print(input("Press enter to go back to Admin Menu "))
+            admin_menu()
         elif admin_opt == 6:
             goto_main_menu()
         else:
